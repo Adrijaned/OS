@@ -1,1 +1,7 @@
+
 .idea
+*.o
+*.elf
+*.iso
+bochslog*
+target
