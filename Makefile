@@ -1,4 +1,4 @@
-OBJECTS = loader.o kmain.o io.o
+OBJECTS = loader.o kmain.o io.o target/x86-unknown-adrij_os/debug/libadrij_os_rust.a
 CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
 LDFLAGS = -T link.ld -melf_i386
@@ -23,5 +23,8 @@ run: os.iso
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
+target/x86-unknown-adrij_os/debug/libadrij_os_rust.a:
+	RUST_TARGET_PATH=$(shell pwd) xargo build --target=x86-unknown-adrij_os
+
 clean: 
-	rm -rf *.o kernel.elf os.iso iso/boot/kernel.elf
+	rm -rf *.o kernel.elf os.iso iso/boot/kernel.elf target/x86-unknown-adrij_os/debug/libadrij_os_rust.a
