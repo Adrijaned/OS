@@ -9,7 +9,11 @@ Just an OS, built from asm, C, Rust and potentially others!
  - `nasm`
  - `rustc`
  - `xargo`
+ - `genisoimage`
+ - `bochs`
  - `make`
+ - `rm`
+ - linux in general
  - definitely something more I forgot
  - more things I forgot?
 
