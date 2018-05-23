@@ -1,4 +1,5 @@
 #include "io.h"
+#include "rust_funcs.h"
 
 typedef enum {
     BLACK,
@@ -42,8 +43,7 @@ void fb_write_cell(unsigned short index, char character, TextCellColorEnum foreg
  *
  *  @param pos The new position of the cursor
  */
-void fb_move_cursor(unsigned short pos)
-{
+void fb_move_cursor(unsigned short pos) {
     outb(FB_COMMAND_PORT, FB_HIGH_BYTE_COMMAND);
     outb(FB_DATA_PORT,    ((pos >> 8) & 0x00FF));
     outb(FB_COMMAND_PORT, FB_LOW_BYTE_COMMAND);
@@ -51,5 +51,5 @@ void fb_move_cursor(unsigned short pos)
 }
 
 void kmain(void) {
-    fb_move_cursor(10);
+    rust_main();
 }
