@@ -16,7 +16,7 @@ Just an OS, built from asm, C, Rust and potentially others!
  - linux in general
  - definitely something more I forgot
  - more things I forgot?
-##Features
+## Features
  - Printing to console - ✓
  - Paging - ❌
  - Threading - ❌
