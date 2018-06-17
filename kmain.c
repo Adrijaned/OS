@@ -51,5 +51,6 @@ void fb_move_cursor(unsigned short pos) {
 }
 
 void kmain(void) {
+    fb_write_cell(10, 'f', LIGHT_BLUE, LIGHT_BROWN);
     rust_main();
 }

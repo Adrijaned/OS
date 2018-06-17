@@ -9,4 +9,6 @@
  */
 void outb(unsigned short port, unsigned char data);
 
+char inb(unsigned short port);
+
 #endif /* INCLUDE_IO_H */
