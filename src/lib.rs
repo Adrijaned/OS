@@ -1,7 +1,10 @@
 #![feature(lang_items)]
+#![feature(panic_implementation)]
 #![no_std]
 
 pub mod io;
+
+use core::panic::PanicInfo;
 
 extern "C" {
     #[no_mangle]
@@ -13,17 +16,14 @@ extern "C" {
 
 #[no_mangle]
 pub extern fn rust_main() {
-    unsafe {
-        outb(0x3d8, 0b_1111_1011);
         io::_putchar(12); // clear screen
-        io::print("Howdy buddies!")
-    }
+        io::print("Hello!")
 }
 
 #[lang = "eh_personality"]
 #[no_mangle]
 pub extern fn eh_personality() {}
 
-#[lang = "panic_fmt"]
+#[panic_implementation]
 #[no_mangle]
-pub extern fn panic_fmt() -> ! { loop {} }
+pub extern fn panic_fmt(_info: &PanicInfo) -> ! { loop {} }

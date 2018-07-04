@@ -23,7 +23,7 @@ pub fn putchar(character: char) {
 pub extern fn _putchar(character: u8) {
     unsafe {
         match character {
-            8 => VGA_FRAMEBUFFER_LINE -= 1,
+            8 if VGA_FRAMEBUFFER_LINE != 0 => VGA_FRAMEBUFFER_LINE -= 1,
             9 => {
                 *(get_memory_offset() as *mut u64) = 0;
                 VGA_FRAMEBUFFER_CHAR += 4
@@ -46,7 +46,7 @@ pub extern fn _putchar(character: u8) {
         }
         if VGA_FRAMEBUFFER_LINE >= 25 {
             scroll()
-        };
+        }
         move_cursor_to_current();
     }
 }
