@@ -11,4 +11,6 @@ void outb(unsigned short port, unsigned char data);
 
 char inb(unsigned short port);
 
+void load_gdt();
+
 #endif /* INCLUDE_IO_H */
