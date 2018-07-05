@@ -2,6 +2,7 @@
 #![feature(panic_implementation)]
 #![no_std]
 
+#[macro_use]
 pub mod io;
 
 use core::panic::PanicInfo;
@@ -16,8 +17,8 @@ extern "C" {
 
 #[no_mangle]
 pub extern fn rust_main() {
-        io::_putchar(12); // clear screen
-        io::print("Hello!")
+    io::_putchar(12); // clear screen
+    println!("Hello!")
 }
 
 #[lang = "eh_personality"]

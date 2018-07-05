@@ -4,6 +4,14 @@ static mut VGA_FRAMEBUFFER_CHAR: u16 = 0;
 
 pub mod typecast;
 
+macro_rules! println {
+    () => {$crate::io::print("\n")};
+    ($fmt:expr) => {{
+        $crate::io::print($fmt);
+        $crate::io::print("\n")
+    }}
+}
+
 pub fn print(string: &str) {
     for byte in string.as_bytes() {
         _putchar(*byte)

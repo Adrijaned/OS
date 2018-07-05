@@ -2,8 +2,8 @@ global load_gdt
 extern _putchar
 
 load_gdt:
-cli
-pusha
+    cli
+    pusha
     lgdt [gdtr]
     popa
     jmp 0x08:.end
