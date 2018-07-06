@@ -12,7 +12,8 @@ align 4
 	dd		CHECKSUM
 
 loader:
-	mov 		eax,		0xCAFEBABE
+	push eax
+	push ebx
 	call        kmain
 .loop:
 	jmp		.loop

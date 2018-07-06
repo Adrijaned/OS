@@ -5,6 +5,8 @@
 #[macro_use]
 pub mod io;
 
+pub mod bootloader;
+
 use core::panic::PanicInfo;
 
 extern "C" {
@@ -16,9 +18,18 @@ extern "C" {
 }
 
 #[no_mangle]
-pub extern fn rust_main() {
+pub extern fn rust_main(eax: u32, ebx: u32) {
     io::_putchar(12); // clear screen
-    println!("Hello!")
+    println!("Hello!");
+    if eax == 0x2BADB002 {println!("Presence of Multiboot1 confirmed.")}
+    match unsafe { (*(ebx as *mut bootloader::Multiboot1Structure)).mem_lower() } {
+        Ok(x) => {
+            println!(x);
+        }
+        Err(_) => {
+            println!("Multiboot flag 0 clear, could not probe memory");
+        }
+    }
 }
 
 #[lang = "eh_personality"]

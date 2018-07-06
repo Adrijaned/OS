@@ -4,6 +4,9 @@ static mut VGA_FRAMEBUFFER_CHAR: u16 = 0;
 
 pub mod typecast;
 
+mod printable;
+pub use self::printable::Printable;
+
 macro_rules! println {
     () => {$crate::io::print("\n")};
     ($fmt:expr) => {{
@@ -12,10 +15,8 @@ macro_rules! println {
     }}
 }
 
-pub fn print(string: &str) {
-    for byte in string.as_bytes() {
-        _putchar(*byte)
-    }
+pub fn print(string: impl Printable) {
+    string.vga_print()
 }
 /// Writes a character on the place of cursor.
 ///
