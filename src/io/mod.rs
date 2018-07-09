@@ -15,6 +15,13 @@ macro_rules! println {
     }}
 }
 
+macro_rules! print {
+    () => {};
+    ($fmt:expr) => {{
+        $crate::io::print($fmt)
+    }}
+}
+
 pub fn print(string: impl Printable) {
     string.vga_print()
 }

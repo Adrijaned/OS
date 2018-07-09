@@ -41,6 +41,9 @@ struct FramebufferTable {
     color_info_2: u16,
 }
 
+mod mmap;
+pub use self::mmap::*;
+
 impl Multiboot1Structure {
     pub fn mem_lower(&self) -> Result<u32, ()> {
         if self.flags & 0b1 != 1 {
@@ -56,11 +59,32 @@ impl Multiboot1Structure {
             Ok(self.mem_upper)
         }
     }
+    pub fn boot_device(&self) -> Result<u32, ()> {
+        if self.flags & 0b10 == 0 {
+            Err(())
+        } else {
+            Ok(self.boot_device)
+        }
+    }
+    pub fn cmd_line(&self) -> Result<u32, ()> {
+        if self.flags & 0b100 == 0 {
+            Err(())
+        } else {
+            Ok(self.cmd_line)
+        }
+    }
     pub fn mmap_length(&self) -> Result<u32, ()> {
         if self.flags & 0b1000000 == 0 {
             Err(())
         } else {
             Ok(self.mmap_length)
+        }
+    }
+    pub fn mmap_addr(&self) -> Result<u32, ()> {
+        if self.flags & 0b1000000 == 0 {
+            Err(())
+        } else {
+            Ok(self.mmap_addr)
         }
     }
 }

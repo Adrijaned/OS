@@ -4,7 +4,7 @@
 
 #[macro_use]
 pub mod io;
-
+mod interrupts;
 pub mod bootloader;
 
 use core::panic::PanicInfo;
@@ -18,16 +18,18 @@ extern "C" {
 }
 
 #[no_mangle]
-pub extern fn rust_main(eax: u32, ebx: u32) {
+pub extern fn rust_main(eax: u32, ebx: *const bootloader::Multiboot1Structure, idt: *mut interrupts::IdtEntry) {
     io::_putchar(12); // clear screen
     println!("Hello!");
-    if eax == 0x2BADB002 {println!("Presence of Multiboot1 confirmed.")}
-    match unsafe { (*(ebx as *mut bootloader::Multiboot1Structure)).mem_lower() } {
-        Ok(x) => {
-            println!(x);
-        }
-        Err(_) => {
-            println!("Multiboot flag 0 clear, could not probe memory");
+    if eax == 0x2BADB002 {println!("Compliance with Multiboot1 confirmed.")}
+    unsafe {
+        match (*ebx).mmap_addr() {
+            Ok(x) => {
+                println!(core::ptr::read(x as *const bootloader::MmapEntry))
+            }
+            Err(_) => {
+                println!("Fatal exception, could not retrieve memory map")
+            }
         }
     }
 }

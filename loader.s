@@ -1,5 +1,5 @@
 global loader
-extern kmain
+extern kmain, idt
 
 MAGIC_NUM 	equ 		0x1BADB002
 FLAGS 		equ 		0x0
@@ -14,6 +14,7 @@ align 4
 loader:
 	push eax
 	push ebx
+	push idt
 	call        kmain
 .loop:
 	jmp		.loop

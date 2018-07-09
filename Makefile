@@ -1,4 +1,4 @@
-OBJECTS = loader.o kmain.o io.o target/x86-unknown-adrij_os/debug/libadrij_os_rust.a segment.o
+OBJECTS = loader.o kmain.o io.o target/x86-unknown-adrij_os/debug/libadrij_os_rust.a segment.o interrupts.o
 CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
 LDFLAGS = -T link.ld -melf_i386
