@@ -22,6 +22,10 @@ macro_rules! print {
     }}
 }
 
+#[no_mangle]
+pub extern "C" fn _print_int(int: u32) {
+    int.vga_print()
+}
 pub fn print(string: impl Printable) {
     string.vga_print()
 }

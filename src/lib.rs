@@ -1,12 +1,14 @@
 #![feature(lang_items)]
 #![feature(panic_implementation)]
+#![feature(asm)]
 #![no_std]
 
 #[macro_use]
 pub mod io;
-mod interrupts;
+pub mod interrupts;
 pub mod bootloader;
 
+pub use interrupts::*;
 use core::panic::PanicInfo;
 
 extern "C" {
@@ -21,6 +23,11 @@ extern "C" {
 pub extern fn rust_main(eax: u32, ebx: *const bootloader::Multiboot1Structure, idt: *mut interrupts::IdtEntry) {
     io::_putchar(12); // clear screen
     println!("Hello!");
+
+    unsafe {
+        interrupts::init(idt as u32, 0x08);
+    }
+
     if eax == 0x2BADB002 {println!("Compliance with Multiboot1 confirmed.")}
     unsafe {
         match (*ebx).mmap_addr() {

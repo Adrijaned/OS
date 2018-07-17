@@ -43,3 +43,11 @@ impl Printable for u32 {
         super::typecast::u8_to_hex_ascii((self & 0xffu32) as u8).vga_print();
     }
 }
+
+impl Printable for u16 {
+    fn vga_print(&self) {
+        ('0', 'x').vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 8) & 0xffu16) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii((self & 0xffu16) as u8).vga_print();
+    }
+}

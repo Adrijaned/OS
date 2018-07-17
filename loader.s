@@ -1,5 +1,5 @@
 global loader
-extern kmain, idt
+extern kmain, idt, div_by_zero, _print_int
 
 MAGIC_NUM 	equ 		0x1BADB002
 FLAGS 		equ 		0x0
@@ -12,9 +12,22 @@ align 4
 	dd		CHECKSUM
 
 loader:
+    mov esp, stack_start+4096
 	push eax
 	push ebx
 	push idt
 	call        kmain
+	mov eax, 5
+	mov ecx, 0
+	;div ecx
+	mov ecx, 0
+	;div ecx
+	mov ecx, 0
+	;div ecx
 .loop:
 	jmp		.loop
+
+section .bss
+align 4
+stack_start:
+resb 4096
