@@ -32,15 +32,17 @@ impl IdtEntry {
 }
 
 pub unsafe fn init(first_entry: u32, selector: u16) {
+    cli();
     println!(1u32);
     for x in 0..256 {
         (*((first_entry + x * 8) as *mut IdtEntry)).set_selector(selector);
         (*((first_entry + x * 8) as *mut IdtEntry)).set_offset(other_exception as extern "C" fn() as u32);
         (*((first_entry + x * 8) as *mut IdtEntry)).set_flags_hardware();
     }
-    (*((first_entry + 13 * 8) as *mut IdtEntry)).set_offset(other_exception2 as extern "C" fn() as u32);
-    (*((first_entry + 8 * 8) as *mut IdtEntry)).set_offset(other_exception3 as extern "C" fn() as u32);
-    (*((first_entry + 8 * 8) as *mut IdtEntry)).disable();
+    println!(1u32);
+    (*((first_entry + 13 * 8) as *mut IdtEntry)).set_offset(other_exception3 as extern "C" fn() as u32);
+    (*((first_entry + 8 * 8) as *mut IdtEntry)).set_offset(other_exception2 as extern "C" fn() as u32);
+//    (*((first_entry + 8 * 8) as *mut IdtEntry)).disable();
     (*((first_entry) as *mut IdtEntry)).set_offset(div_by_zero as extern "C" fn() as u32);
     println!(div_by_zero as extern "C" fn() as u32);
     println!((*(first_entry as *const IdtEntry)).offset_lower);
@@ -49,15 +51,29 @@ pub unsafe fn init(first_entry: u32, selector: u16) {
     asm!("call load_idt"::::"intel","volatile");
     super::io::putchar('a');
     sti();
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
+    super::io::putchar('a');
 }
 
 #[inline(always)]
+#[naked]
 fn cli() {
     unsafe {
         asm!("cli"::::"intel","volatile")
     }
 }
 
+#[naked]
 #[inline(always)]
 fn sti() {
     unsafe {
@@ -65,6 +81,7 @@ fn sti() {
     }
 }
 
+#[naked]
 #[no_mangle]
 pub extern "C" fn div_by_zero() {
     unsafe {
@@ -76,10 +93,11 @@ pub extern "C" fn div_by_zero() {
     unsafe {
         asm!("popa"::::"intel","volatile");
         asm!("mov ecx, 1"::::"intel","volatile");
-        asm!("iret"::::"intel","volatile");
+        asm!("iretd"::::"intel","volatile");
     }
 }
 
+#[naked]
 #[no_mangle]
 pub extern "C" fn other_exception() {
     unsafe {
@@ -88,10 +106,11 @@ pub extern "C" fn other_exception() {
     super::io::putchar('x');
     unsafe {
         asm!("popa"::::"intel","volatile");
-        asm!("iret"::::"intel","volatile");
+        asm!("iretd"::::"intel","volatile");
     }
 }
 
+#[naked]
 #[no_mangle]
 pub extern "C" fn other_exception3() {
     unsafe {
@@ -101,10 +120,12 @@ pub extern "C" fn other_exception3() {
         print!("Page fault: ");
         println!(cr2);
         asm!("popa"::::"intel","volatile");
-        asm!("iret"::::"intel","volatile");
+        asm!("add esp, 4"::::"intel","volatile");
+        asm!("iretd"::::"intel","volatile");
     }
 }
 
+#[naked]
 #[no_mangle]
 pub extern "C" fn other_exception2() {
     unsafe {
@@ -112,10 +133,10 @@ pub extern "C" fn other_exception2() {
         {
             let c: u32;
             asm!("mov eax, [esp + 32]":"={eax}"(c):::"intel","volatile");
-//            println!(c);
+            println!(c);
         }
         asm!("popa"::::"intel","volatile");
-        asm!("add esp, 4"::::"intel","volatile");
-        asm!("iret"::::"intel","volatile");
+//        asm!("add esp, 4"::::"intel","volatile");
+        asm!("iretd"::::"intel","volatile");
     }
 }

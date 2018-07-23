@@ -5,7 +5,7 @@ extern global_interrupt_handler
 section .data
 
 idt:
-  times 256 resq 0
+  times 256 dq 0
 idt_end:
 idtr:
   dw idt - idt_end - 1

@@ -1,6 +1,7 @@
 #![feature(lang_items)]
 #![feature(panic_implementation)]
 #![feature(asm)]
+#![feature(naked_functions)]
 #![no_std]
 
 #[macro_use]
@@ -26,8 +27,10 @@ pub extern fn rust_main(eax: u32, ebx: *const bootloader::Multiboot1Structure, i
 
     unsafe {
         interrupts::init(idt as u32, 0x08);
+        io::putchar('b')
     }
 
+    io::putchar('a');
     if eax == 0x2BADB002 {println!("Compliance with Multiboot1 confirmed.")}
     unsafe {
         match (*ebx).mmap_addr() {
