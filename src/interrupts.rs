@@ -40,8 +40,8 @@ pub unsafe fn init(first_entry: u32, selector: u16) {
         (*((first_entry + x * 8) as *mut IdtEntry)).set_flags_hardware();
     }
     println!(1u32);
-    (*((first_entry + 13 * 8) as *mut IdtEntry)).set_offset(other_exception3 as extern "C" fn() as u32);
-    (*((first_entry + 8 * 8) as *mut IdtEntry)).set_offset(other_exception2 as extern "C" fn() as u32);
+    (*((first_entry + 13 * 8) as *mut IdtEntry)).set_offset(general_protection_fault as extern "C" fn() as u32);
+    (*((first_entry + 8 * 8) as *mut IdtEntry)).set_offset(double_fault as extern "C" fn() as u32);
 //    (*((first_entry + 8 * 8) as *mut IdtEntry)).disable();
     (*((first_entry) as *mut IdtEntry)).set_offset(div_by_zero as extern "C" fn() as u32);
     println!(div_by_zero as extern "C" fn() as u32);
@@ -85,14 +85,10 @@ fn sti() {
 #[no_mangle]
 pub extern "C" fn div_by_zero() {
     unsafe {
-        asm!("pusha"::::"intel","volatile")
-    }
-//    cli();
-    println!("divbyzero");
-//    sti();
-    unsafe {
+        asm!("pusha"::::"intel","volatile");
+        asm!("mov byte ptr [0x000B8091], 'd'"::::"intel","volatile");
         asm!("popa"::::"intel","volatile");
-        asm!("mov ecx, 1"::::"intel","volatile");
+        asm!("mov ecx, 2"::::"intel","volatile");
         asm!("iretd"::::"intel","volatile");
     }
 }
@@ -102,9 +98,9 @@ pub extern "C" fn div_by_zero() {
 pub extern "C" fn other_exception() {
     unsafe {
         asm!("pusha"::::"intel","volatile");
-    }
-    super::io::putchar('x');
-    unsafe {
+        asm!("push 'x'"::::"intel","volatile");
+        asm!("call _putchar"::::"intel","volatile");
+        asm!("add esp, 4"::::"intel","volatile");
         asm!("popa"::::"intel","volatile");
         asm!("iretd"::::"intel","volatile");
     }
@@ -112,13 +108,16 @@ pub extern "C" fn other_exception() {
 
 #[naked]
 #[no_mangle]
-pub extern "C" fn other_exception3() {
+pub extern "C" fn general_protection_fault() {
     unsafe {
         asm!("pusha"::::"intel","volatile");
-        let cr2: u32;
-        asm!("mov eax, cr2" : "={eax}"(cr2) : : : "intel", "volatile");
-        print!("Page fault: ");
-        println!(cr2);
+        asm!("mov eax, [esp + 32]"::::"intel", "volatile");
+        asm!("push 'g'"::::"intel","volatile");
+        asm!("call _putchar"::::"intel","volatile");
+        asm!("add esp, 4"::::"intel","volatile");
+        asm!("push eax"::::"intel","volatile");
+        asm!("call _print_int"::::"intel","volatile");
+        asm!("add esp, 4"::::"intel","volatile");
         asm!("popa"::::"intel","volatile");
         asm!("add esp, 4"::::"intel","volatile");
         asm!("iretd"::::"intel","volatile");
@@ -127,16 +126,14 @@ pub extern "C" fn other_exception3() {
 
 #[naked]
 #[no_mangle]
-pub extern "C" fn other_exception2() {
+pub extern "C" fn double_fault() {
     unsafe {
         asm!("pusha"::::"intel","volatile");
-        {
-            let c: u32;
-            asm!("mov eax, [esp + 32]":"={eax}"(c):::"intel","volatile");
-            println!(c);
-        }
+        asm!("mov eax, [esp + 32]"::::"intel","volatile");
+        asm!("push eax"::::"intel","volatile");
+        asm!("call _print_int");
+        asm!("add esp, 4"::::"intel","volatile");
         asm!("popa"::::"intel","volatile");
-//        asm!("add esp, 4"::::"intel","volatile");
         asm!("iretd"::::"intel","volatile");
     }
 }

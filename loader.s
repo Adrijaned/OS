@@ -17,13 +17,9 @@ loader:
 	push ebx
 	push idt
 	call        kmain
-	mov eax, 5
-	mov ecx, 0
-	;div ecx
-	mov ecx, 0
-	;div ecx
-	mov ecx, 0
-	;div ecx
+	mov eax, 8
+	mov ecx, 1
+	div ecx
 .loop:
 	jmp		.loop
 
