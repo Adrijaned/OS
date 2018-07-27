@@ -86,7 +86,9 @@ fn sti() {
 pub extern "C" fn div_by_zero() {
     unsafe {
         asm!("pusha"::::"intel","volatile");
-        asm!("mov byte ptr [0x000B8091], 'd'"::::"intel","volatile");
+        asm!("push 'd'"::::"intel","volatile");
+        asm!("call _putchar"::::"intel","volatile");
+        asm!("add esp, 4"::::"intel","volatile");
         asm!("popa"::::"intel","volatile");
         asm!("mov ecx, 2"::::"intel","volatile");
         asm!("iretd"::::"intel","volatile");
