@@ -27,20 +27,22 @@ pub extern fn rust_main(eax: u32, ebx: *const bootloader::Multiboot1Structure, i
 
     unsafe {
         interrupts::init(idt as u32, 0x08);
-        io::putchar('b')
     }
 
-    io::putchar('a');
-    if eax == 0x2BADB002 {println!("Compliance with Multiboot1 confirmed.")}
-    unsafe {
-        match (*ebx).mmap_addr() {
-            Ok(x) => {
-                println!(core::ptr::read(x as *const bootloader::MmapEntry))
-            }
-            Err(_) => {
-                println!("Fatal exception, could not retrieve memory map")
+    if eax == 0x2BADB002 {
+        println!("Compliance with Multiboot1 confirmed.");
+        unsafe {
+            match (*ebx).mmap_addr() {
+                Ok(x) => {
+                    println!(core::ptr::read(x as *const bootloader::MmapEntry))
+                }
+                Err(_) => {
+                    println!("Fatal exception, could not retrieve memory map")
+                }
             }
         }
+    } else {
+        println!("Could not verify compliance with Multiboot1")
     }
 }
 
@@ -50,4 +52,4 @@ pub extern fn eh_personality() {}
 
 #[panic_implementation]
 #[no_mangle]
-pub extern fn panic_fmt(_info: &PanicInfo) -> ! { loop {} }
+pub extern fn panic_fmt(info: &PanicInfo) -> ! { loop {} }

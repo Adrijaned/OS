@@ -49,20 +49,7 @@ pub unsafe fn init(first_entry: u32, selector: u16) {
     println!((*(first_entry as *const IdtEntry)).offset_higher);
 //    cli();
     asm!("call load_idt"::::"intel","volatile");
-    super::io::putchar('a');
     sti();
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
-    super::io::putchar('a');
 }
 
 #[inline(always)]

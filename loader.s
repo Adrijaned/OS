@@ -21,6 +21,8 @@ loader:
 	mov ecx, 0
 	mov edx, 0
 	div ecx
+	mov ecx, 0
+	div ecx
 .loop:
 	jmp		.loop
 
