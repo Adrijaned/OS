@@ -64,7 +64,7 @@ pub extern fn _putchar(character: u8) {
             VGA_FRAMEBUFFER_CHAR -= 80;
             VGA_FRAMEBUFFER_LINE += 1
         }
-        if VGA_FRAMEBUFFER_LINE >= 25 {
+        if VGA_FRAMEBUFFER_LINE >= 24 {
             scroll()
         }
         move_cursor_to_current();
@@ -91,7 +91,7 @@ unsafe fn clear() {
     VGA_FRAMEBUFFER_CHAR = 0;
     VGA_FRAMEBUFFER_LINE = 0;
     let mut mem = VGA_FRAMEBUFFER_MEMORY_START;
-    for _ in 1..=2000 {
+    for _ in 1..=1920 {
         *(mem as *mut u16) = 0;
         mem += 2;
     }
@@ -105,7 +105,7 @@ unsafe fn scroll() {
         VGA_FRAMEBUFFER_LINE -= 1;
     }
     let mut mem = VGA_FRAMEBUFFER_MEMORY_START;
-    for _ in 1..=1920 {
+    for _ in 1..=1840 {
         *(mem as *mut u16) = *((mem + 160) as *const u16);
         mem += 2
     }
@@ -114,3 +114,5 @@ unsafe fn scroll() {
         mem += 2;
     }
 }
+
+pub mod status_bar;

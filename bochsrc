@@ -4,6 +4,7 @@ vgaromimage:		file=/usr/share/bochs/VGABIOS-lgpl-latest
 ata0-master:		type=cdrom, path=os.iso, status=inserted
 boot:			cdrom
 log:			bochslog.txt
-clock:			sync=realtime, time0=local
+clock:			sync=realtime, time0=local, rtc_sync=1
 cpu:			count=1, ips=1000000
 display_library: x, options = "gui_debug"
+speaker:        enabled=1, mode=system
