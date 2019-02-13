@@ -1,5 +1,5 @@
 global loader
-extern kmain, idt, div_by_zero, _print_int
+extern rust_main, idt, div_by_zero, _print_int
 
 MAGIC_NUM 	equ 		0x1BADB002
 FLAGS 		equ 		0x0
@@ -16,7 +16,7 @@ loader:
 	push eax
 	push ebx
 	push idt
-	call        kmain
+	call rust_main
 .loop:
 	jmp		.loop
 

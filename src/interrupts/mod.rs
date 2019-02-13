@@ -2,6 +2,7 @@ pub use self::pit::set_frequency;
 pub use self::pit::{beep, no_beep};
 mod pic;
 mod pit;
+mod keyboard;
 
 #[repr(C,packed)]
 pub struct IdtEntry {
@@ -48,6 +49,7 @@ pub unsafe fn init(first_entry: u32, selector: u16) {
     (*((first_entry) as *mut IdtEntry)).set_offset(handlers::div_by_zero as extern "C" fn() as u32);
     let first_irq_entry = first_entry + 0x20 * 8;
     (*(first_irq_entry as *mut IdtEntry)).set_offset(handlers::timer_irq as extern "C" fn() as u32);
+    (*((first_irq_entry + 1 * 8) as *mut IdtEntry)).set_offset(handlers::keyboard_irq as extern "C" fn() as u32);
     asm!("call load_idt"::::"intel","volatile");
     pic::init_pic(0x20, 0x28); // put them right after CPU exceptions
     sti();

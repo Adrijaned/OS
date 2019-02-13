@@ -1,11 +1,10 @@
 #![feature(lang_items)]
-#![feature(panic_implementation)]
 #![feature(asm)]
 #![feature(naked_functions)]
 #![no_std]
 
 macro_rules! wait {
-    () => {::outb(0x80, 10)}; // random data on unused port
+    () => {::outb(0x80, 10)}; // random data on unused port - IO to delay processor
 }
 
 #[macro_use]
@@ -23,10 +22,14 @@ extern "C" {
 
     #[no_mangle]
     pub fn inb(port: u16) -> u8;
+
+    #[no_mangle]
+    pub fn load_gdt();
 }
 
 #[no_mangle]
-pub extern fn rust_main(eax: u32, ebx: *const bootloader::Multiboot1Structure, idt: *mut interrupts::IdtEntry) {
+pub unsafe extern fn rust_main(idt: *mut interrupts::IdtEntry, ebx: *const bootloader::Multiboot1Structure, eax: u32) {
+    load_gdt();
     io::_putchar(12); // clear screen
     io::status_bar::init();
     println!("Hello!");
@@ -57,6 +60,6 @@ pub extern fn rust_main(eax: u32, ebx: *const bootloader::Multiboot1Structure, i
 #[no_mangle]
 pub extern fn eh_personality() {}
 
-#[panic_implementation]
+#[panic_handler]
 #[no_mangle]
 pub extern fn panic_fmt(_info: &PanicInfo) -> ! { loop {} }

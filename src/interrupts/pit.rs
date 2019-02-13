@@ -1,3 +1,6 @@
+// (programmable) (interrupt) timer. Used mainly for beeping with beeper. Raises IRQ0 whenever the signal is issued
+
+
 const CLOCK_RATE: f64 = 105_000_000f64 / 88f64; //wikipedia constant
 
 pub unsafe fn set_frequency(micros: u16) -> i32{

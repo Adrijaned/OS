@@ -1,6 +1,4 @@
-OBJECTS = loader.o kmain.o io.o target/x86-unknown-adrij_os/debug/libadrij_os_rust.a segment.o interrupts.o
-CC = gcc
-CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
+OBJECTS = loader.o io.o target/x86-unknown-adrij_os/debug/libadrij_os_rust.a segment.o interrupts.o
 LDFLAGS = -T link.ld -melf_i386
 AS = nasm
 ASFLAGS = -f elf
@@ -16,9 +14,6 @@ os.iso: kernel.elf
 
 run: os.iso
 	bochs -f bochsrc -q
-
-%.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
 
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@

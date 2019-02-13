@@ -43,7 +43,11 @@ pub fn putchar(character: char) {
 pub extern fn _putchar(character: u8) {
     unsafe {
         match character {
-            8 if VGA_FRAMEBUFFER_LINE != 0 => VGA_FRAMEBUFFER_LINE -= 1,
+            8 if VGA_FRAMEBUFFER_CHAR != 0 => VGA_FRAMEBUFFER_CHAR -= 1,
+            8 if VGA_FRAMEBUFFER_CHAR == 0 && VGA_FRAMEBUFFER_LINE != 0 => {
+                VGA_FRAMEBUFFER_LINE -= 1;
+                VGA_FRAMEBUFFER_CHAR = 79;
+            }
             9 => {
                 *(get_memory_offset() as *mut u64) = 0;
                 VGA_FRAMEBUFFER_CHAR += 4
@@ -55,7 +59,7 @@ pub extern fn _putchar(character: u8) {
             12 => clear(),
             32 => VGA_FRAMEBUFFER_CHAR += 1,
             33...126 => {
-                *(get_memory_offset()) = (character as u16) + 0b_0000_1111_0000_0000; // little endian system
+                *(get_memory_offset()) = (character as u16) + 0b_0000_1111_0000_0000;
                 VGA_FRAMEBUFFER_CHAR += 1;
             }
             _ => (),
@@ -92,7 +96,7 @@ unsafe fn clear() {
     VGA_FRAMEBUFFER_LINE = 0;
     let mut mem = VGA_FRAMEBUFFER_MEMORY_START;
     for _ in 1..=1920 {
-        *(mem as *mut u16) = 0;
+        *(mem as *mut u16) = 0b_0000_1111_0000_0000 + 0x20;
         mem += 2;
     }
 }

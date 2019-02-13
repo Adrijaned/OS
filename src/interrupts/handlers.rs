@@ -72,3 +72,19 @@ pub extern "C" fn timer_irq() {
         asm!("iretd"::::"intel","volatile");
     }
 }
+
+#[naked]
+#[no_mangle]
+pub extern "C" fn keyboard_irq() {
+    #[inline(never)]
+    unsafe fn inner() {
+        super::keyboard::handle_irq(::inb(0x60));
+        super::pic::send_eoi(1);
+    }
+    unsafe {
+        asm!("pusha"::::"intel","volatile");
+        inner();
+        asm!("popa"::::"intel","volatile");
+        asm!("iretd"::::"intel","volatile");
+    }
+}
