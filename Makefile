@@ -29,11 +29,5 @@ remote_build:
 	git diff | nc -N -q 0 $(BUILD_IP)
 	: > kernel.elf
 	: > os.iso
-	while ! [ -s kernel.elf ]; do
-		nc -w 1 $(BUILD_IP) > kernel.elf
-		sleep 1
-	done
-	while ! [ -s os.iso ]; do
-		nc -w 1 ${BUILD_IP) > os.iso
-		sleep 1
-	done
+	while ! [ -s kernel.elf ]; do nc -w 1 $(BUILD_IP) > kernel.elf; sleep 1; done
+	while ! [ -s os.iso ]; do nc -w 1 $(BUILD_IP) > os.iso; sleep 1; done
