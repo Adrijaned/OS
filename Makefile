@@ -2,6 +2,7 @@ OBJECTS = loader.o io.o target/x86-unknown-adrij_os/debug/libadrij_os_rust.a seg
 LDFLAGS = -T link.ld -melf_i386
 AS = nasm
 ASFLAGS = -f elf
+BUILD_IP = 192.168.1.101 6660
 
 all: kernel.elf
 
@@ -23,3 +24,16 @@ target/x86-unknown-adrij_os/debug/libadrij_os_rust.a:
 
 clean: 
 	rm -rf *.o kernel.elf os.iso iso/boot/kernel.elf target/x86-unknown-adrij_os/debug/libadrij_os_rust.a
+
+remote_build:
+	git diff | nc -N -q 0 $(BUILD_IP)
+	: > kernel.elf
+	: > os.iso
+	while ! [ -s kernel.elf ]; do
+		nc -w 1 $(BUILD_IP) > kernel.elf
+		sleep 1
+	done
+	while ! [ -s os.iso ]; do
+		nc -w 1 ${BUILD_IP) > os.iso
+		sleep 1
+	done

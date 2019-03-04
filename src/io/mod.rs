@@ -3,6 +3,7 @@ static mut VGA_FRAMEBUFFER_LINE: u16 = 0;
 static mut VGA_FRAMEBUFFER_CHAR: u16 = 0;
 
 pub mod typecast;
+pub mod input_buffer;
 
 mod printable;
 pub use self::printable::Printable;
@@ -49,7 +50,7 @@ pub extern fn _putchar(character: u8) {
                 VGA_FRAMEBUFFER_CHAR = 79;
             }
             9 => {
-                *(get_memory_offset() as *mut u64) = 0;
+                *(get_memory_offset() as *mut u64) = 0x0909000000; // set last char to 0x09 so space deletion can potentially work properly
                 VGA_FRAMEBUFFER_CHAR += 4
             }
             10 => {
