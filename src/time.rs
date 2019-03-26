@@ -41,16 +41,38 @@ pub (super) fn init() {
             TIMESTAMP_SINCE_BOOTUP += ::inb(0x71) as u64 * 3600;
             while {::outb(0x70, 0x0A & nmi_bit); ::inb(0x71) & 0b_1000_0000 > 0} { wait!() }
             ::outb(0x70, 0x00 | nmi_bit);
-            TIMESTAMP += ::inb(0x71) as u64;
+            let secs = ::inb(0x71) as u64;
+            TIMESTAMP += secs;
             ::outb(0x70, 0x02 | nmi_bit);
-            TIMESTAMP += ::inb(0x71) as u64 * 60;
+            let mins = ::inb(0x71) as u64;
+            TIMESTAMP += mins * 60;
             ::outb(0x70, 0x04 | nmi_bit);
-            TIMESTAMP += ::inb(0x71) as u64 * 3600;
+            let hrs = ::inb(0x71) as u64;
+            TIMESTAMP += hrs * 3600;
             if TIMESTAMP == TIMESTAMP_SINCE_BOOTUP {
                 TIMESTAMP_SINCE_BOOTUP = 0;
+                ::outb(0x70, 0x0b | nmi_bit);
+                let status_byte_b = ::inb(0x71);
+                let is_bcd = (status_byte_b & 0b_0000_0100) == 0;
+                let is_12h = (status_byte_b & 0b_0000_0010) == 0;
+                let is_pm = hrs & 0b_1000_0000 > 0;
+                let (secs, mins, hrs) = if is_bcd {
+                    (
+                        ((secs / 16) * 10) + (secs & 0xf),
+                        ((mins / 16) * 10) + (mins & 0xf),
+                        (((hrs  / 16) * 10) + (hrs  & 0xf)) & 0b_0111_1111
+                    )
+                } else { (secs, mins, hrs) };
+                let hrs = if is_pm { hrs + 12 } else { hrs };
+                let hrs = if hrs % 12 == 0 && is_12h { hrs - 12 } else { hrs };
+                TIMESTAMP = secs + 60*mins + 3600*hrs;
+                println!(secs as u16);
+                println!(mins as u16);
+                println!(hrs as u16);
                 break 'retrieve_time_main;
             }
         }
+        println!(TIMESTAMP);
     }
 }
 

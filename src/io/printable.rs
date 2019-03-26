@@ -34,6 +34,20 @@ impl<'a> Printable for &'a str {
     }
 }
 
+impl Printable for u64 {
+    fn vga_print(&self) {
+        ('0', 'x').vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 56) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 48) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 40) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 32) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 24) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 16) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii(((self >> 8) & 0xffu64) as u8).vga_print();
+        super::typecast::u8_to_hex_ascii((self & 0xffu64) as u8).vga_print();
+    }
+}
+
 impl Printable for u32 {
     fn vga_print(&self) {
         ('0', 'x').vga_print();
