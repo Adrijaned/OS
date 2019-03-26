@@ -1,4 +1,5 @@
 const MEMORY_START: u32 = super::VGA_FRAMEBUFFER_MEMORY_START + 3840;
+static mut BEEP_SET: u64 = 0;
 
 pub fn init() {
     let mut mem = MEMORY_START + 1;
@@ -18,6 +19,7 @@ pub fn set_time(hours: u8, minutes: u8, seconds: u8) {
         *((MEMORY_START + 10) as *mut u8) = 0x3au8;
         *((MEMORY_START + 12) as *mut u8) = seconds / 10 + 0x30u8;
         *((MEMORY_START + 14) as *mut u8) = (seconds % 10) + 0x30u8;
+        if BEEP_SET + 3 > ::time::get_timestamp() {no_beep()};
     }
 }
 
@@ -27,7 +29,8 @@ pub fn beep(frequency: u16) {
         *((MEMORY_START + 154) as *mut u8) = 0x45;
         *((MEMORY_START + 156) as *mut u8) = 0x45;
         *((MEMORY_START + 158) as *mut u8) = 0x50;
-        ::interrupts::beep(frequency)
+        ::interrupts::beep(frequency);
+        BEEP_SET = ::time::get_timestamp();
     }
 }
 pub fn no_beep() {

@@ -25,6 +25,12 @@ pub unsafe fn tick() {
     }
 }
 
+pub fn get_timestamp() -> u64 {
+    unsafe {
+        TIMESTAMP
+    }
+}
+
 pub (super) fn init() {
     unsafe {
         ERROR_PICOS = ::interrupts::set_frequency(RESOLUTION_MICROS);

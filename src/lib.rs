@@ -35,9 +35,7 @@ pub unsafe extern fn rust_main(idt: *mut interrupts::IdtEntry, ebx: *const bootl
     println!("Hello!");
     time::init();
 
-    unsafe {
-        interrupts::init(idt as u32, 0x08);
-    }
+    interrupts::init(idt as u32, 0x08);
 
     if eax == 0x2BADB002 {
         println!("Compliance with Multiboot1 confirmed.");

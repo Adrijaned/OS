@@ -1,6 +1,7 @@
+use interrupts::keyboard::keymap::Key::CharKey;
+
 mod keymap;
 pub unsafe fn handle_irq(key_code: u8){
-    ///
     let is_make = key_code & 0b_1000__0000 == 0;
     let key_code = key_code & 0b_0111_1111;
     if key_code == 0xe0 {
@@ -12,7 +13,7 @@ pub unsafe fn handle_irq(key_code: u8){
     if is_make {
         match keymap::get_char(key_code, false, 1) {
             Err(_) => println!("Keyboard error"),
-            Ok(Some(x)) => ::io::input_buffer::register_keypress(x),
+            Ok(CharKey(x)) => ::io::input_buffer::register_keypress(*x),
             Ok(_) => (),
         }
     }
